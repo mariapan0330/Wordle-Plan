@@ -11,11 +11,14 @@
 var colors = require('colors'); // now in console, you can add .color to your string
 var theAnswer
 var userGuess
-// NEW
+// NEW: roundnum and iseval
 var roundNum
+var isEvaluated = [false, false, false, false, false]
 
 function chooseWord() {
-  var possibleChoices = ["match", "drift", "lover", "screw", "paper", "flash", "prove", "sugar", "house", "torch", "judge", "ready", "grind", "ankle", "class", "curve", "cycle"]
+  // var possibleChoices = ["match", "drift", "lover", "screw", "paper", "flash", "prove", "sugar", "house", "torch", "judge", "ready", "grind", "ankle", "class", "curve", "cycle"]
+  var possibleChoices = ['paper', 'class', 'guess','seems'] // double letters
+  // var possibleChoices = ['match', 'drift', 'flash'] // all letters different
   
   theAnswer = possibleChoices[Math.floor(Math.random()*possibleChoices.length)]
   // console.log(possibleChoices.length)
@@ -54,14 +57,17 @@ function makeGuess() {
 }
 
 function evaluateGuess() {
+  isEvaluated = [false,false,false,false,false]
   for(var c in userGuess){
     // *NEW: Evaluation rules.
-    // * if the current character in userGuess is the same as the current character in the answer, then make that spot in the gameboard green
+    // * if the current character in userGuess is the same as the current character in the answer, then make that spot in the gameboard green and check off that you evaluated the character at that position
     if (userGuess[c] == theAnswer[c]){
       gameBoard[roundNum][c] = userGuess[c].green
-      // * if the answer includes the current character and the index of that letter and the current character aren't the same (i.e. guess is GUESS and word is S)
-    } else if (theAnswer.includes(userGuess[c]) && theAnswer.indexOf(userGuess[c] != c)){
+      isEvaluated[c] = true
+      // * if the answer includes the current character and the index of that letter and index of the current character aren't the same (i.e. answer is SNACK and userGuess is SSSSS and you're evaluating the first S)
+    } else if (theAnswer.includes(userGuess[c]) && theAnswer.indexOf(userGuess[c]) != c && isEvaluated[theAnswer.indexOf(userGuess[c])] == false){
       gameBoard[roundNum][c] = userGuess[c].yellow
+      isEvaluated[theAnswer.indexOf(userGuess[c])] = true
     } else {
       gameBoard[roundNum][c] = userGuess[c].grey
     }
