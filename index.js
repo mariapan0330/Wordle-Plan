@@ -11,6 +11,8 @@
 var colors = require('colors'); // now in console, you can add .color to your string
 var theAnswer
 var userGuess
+// NEW
+var roundNum
 
 function chooseWord() {
   var possibleChoices = ["match", "drift", "lover", "screw", "paper", "flash", "prove", "sugar", "house", "torch", "judge", "ready", "grind", "ankle", "class", "curve", "cycle"]
@@ -28,7 +30,8 @@ var gameBoard = [
   ["_","_","_","_","_"],
   ["_","_","_","_","_"],
   ["_","_","_","_","_"]]
-function makeGameBoard(){
+// NEW: rename makeGameBoard to printGameBoard
+function printGameBoard(){
   // console.log('hello'.yellow, 'to you'.green);
   for(var i of gameBoard){
     console.log(i.join(""))
@@ -36,17 +39,31 @@ function makeGameBoard(){
 }
 
 function makeGuess() {
-  userGuess = prompt('Your Guess')
+  userGuess = prompt("Guess a 5-letter word")
+  // count the letters in userGuess
+  // if lettercount is 5, then continue
+  // if not, ask again.
+  var letterCount = userGuess.length
+  while (letterCount != 5 || !/^[a-zA-Z]+$/.test(userGuess)) {
+    userGuess = prompt("That's invalid, guess a 5-letter word")
+    letterCount = userGuess.length
+  }
+  // NEW
+  userGuess = userGuess.split("")
+  // console.log(userGuess)
 }
 
 function evaluateGuess() {
-  if (userGuess.length != 5){
-    console.log("That's not a valid entry.")
-    return false
-  }
   for(var c in userGuess){
+    // *NEW: Evaluation rules.
+    // * if the current character in userGuess is the same as the current character in the answer, then make that spot in the gameboard green
     if (userGuess[c] == theAnswer[c]){
-      gameBoard[0][c] = ""
+      gameBoard[roundNum][c] = userGuess[c].green
+      // * if the answer includes the current character and the index of that letter and the current character aren't the same (i.e. guess is GUESS and word is S)
+    } else if (theAnswer.includes(userGuess[c]) && theAnswer.indexOf(userGuess[c] != c)){
+      gameBoard[roundNum][c] = userGuess[c].yellow
+    } else {
+      gameBoard[roundNum][c] = userGuess[c].grey
     }
   }
 }
@@ -54,14 +71,18 @@ function evaluateGuess() {
 
 
 function playWordle(){
+  roundNum = 0
   chooseWord()
-  makeGameBoard()
-  var gameOver = false
-  while (!gameOver){
-    makeGuess()
-    gameOver = evaluateGuess()
-    break
-  }
+  printGameBoard()
+  // var gameOver = false
+  // while (!gameOver){
+  makeGuess()
+  console.clear()
+  evaluateGuess()
+  printGameBoard()
+  // gameOver = evaluateGuess()
+    // break
+  // }
 }
 
 
